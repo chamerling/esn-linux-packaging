@@ -22,6 +22,7 @@ stages:
     - curl -s -X POST
       -F "token=${BUILD_PACKAGE_CI_TOKEN}"
       -F "ref=master"
+      -F "variables[PACKAGING_REPO]=https://ci.linagora.com/linagora/lgs/openpaas/esn-linux-packaging.git"
       -F "variables[REPO]=https://ci.linagora.com/linagora/lgs/openpaas/esn.git"
       -F "variables[VERSION_FILE]=package.json"
       -F "variables[PACKAGE_NAME]=openpaas"
@@ -49,7 +50,9 @@ build_pkg_rpm_openpaas:
       -F "token=${BUILD_PACKAGE_CI_TOKEN}"
       -F "ref=master"
       -F "variables[REPO]=https://ci.linagora.com/linagora/lgs/openpaas/esn.git"
-      -F "variables[VERSION_FILE]=package.json"
+      -F "variables[BRANCH]=master"
+      -F "variables[PACKAGING_REPO]=https://ci.linagora.com/linagora/lgs/openpaas/esn-linux-packaging.git"
+      -F "variables[PACKAGING_BRANCH]=master"
       -F "variables[PACKAGE_NAME]=openpaas"
       -F "variables[DOCKERFILE]=redhat/7/openpaas/Dockerfile"
       https://ci.linagora.com/api/v4/projects/338/trigger/pipeline | jq .

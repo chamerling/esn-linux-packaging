@@ -3,21 +3,21 @@
 #
 
 FROM linagora/fpm-centos-7
-MAINTAINER Linagora Folks <openpaas@linagora.com>
+LABEL maintainer="Linagora Folks <openpaas@linagora.com>"
 
-ARG VERSION=0.0.0
+ARG VERSION=0.0.1
 ARG ITERATION=1
-ARG TREEISH=master
+ARG BRANCH=master
+ARG REPO=https://ci.linagora.com/linagora/lgs/openpaas/esn.git
 
 RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash - && \
     yum groupinstall -y 'Development Tools' && \
     yum install -y epel-release && \
     yum install -y git rpm-build nodejs ImageMagick cairo cairo-devel cairomm-devel libjpeg-turbo-devel pango pango-devel pangomm pangomm-devel giflib-devel
 
-RUN git clone --no-single-branch --depth=1 https://ci.linagora.com/linagora/lgs/openpaas/esn.git /package/usr/share/openpaas
+RUN git clone --no-single-branch --depth=1 $REPO /package/usr/share/openpaas
 
 ADD common/openpaas/package /package
-ADD redhat/7/openpaas/package /package
 
 ADD common/openpaas/openpaas.preinst /root/
 ADD redhat/7/openpaas/openpaas.postinst /root/
@@ -25,7 +25,7 @@ ADD common/openpaas/openpaas.postrm /root/
 ADD common/openpaas/openpaas.prerm /root/
 
 WORKDIR /package/usr/share/openpaas
-RUN git checkout $TREEISH && npm i --production && ./node_modules/bower/bin/bower install --allow-root && \
+RUN git checkout $BRANCH && npm i --production && ./node_modules/bower/bin/bower install --allow-root && \
     find . -name .git -type d -exec rm -rf {} +
 
 WORKDIR /package
@@ -47,12 +47,6 @@ RUN fpm \
   --rpm-user openpaas \
   --rpm-group openpaas \
   --rpm-dist el7 \
-  --depends nginx \
-  --depends elasticsearch \
-  --depends mongodb-org \
-  --depends redis \
-  --depends rabbitmq-server \
-  --depends java-1.8.0-openjdk \
   --depends nodejs \
   --depends ImageMagick \
   --depends cairo \
